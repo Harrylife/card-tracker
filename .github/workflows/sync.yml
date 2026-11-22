@@ -12,10 +12,13 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
       - name: Install 7zip
-        run: sudo apt-get update -y && sudo apt-get install -y p7zip-full
+        run: |
+          sudo apt-get update -y || true
+          sudo apt-get install -y p7zip-full || echo "7zip not installed (only needed for backfill)"
       - name: Download prices
         env:
           BACKFILL_DAYS: ${{ github.event.inputs.backfill_days }}
@@ -24,5 +27,13 @@ jobs:
         run: |
           git config user.name "card-tracker-bot"
           git config user.email "bot@users.noreply.github.com"
+          git config http.postBuffer 524288000
           git add -A data
-          git diff --cached --quiet || (git commit -m "Daily price sync" && git push)
+          if git diff --cached --quiet; then echo "Nothing new to save"; exit 0; fi
+          git commit -m "Daily price sync"
+          for i in 1 2 3; do
+            if git pull --rebase origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME"; then exit 0; fi
+            sleep 5
+          done
+          echo "::error::Could not save the results to GitHub (push failed 3 times)"
+          exit 1
