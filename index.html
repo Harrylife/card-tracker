@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Harrylife TCG Manager</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#6c4cff"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f3f2fb;--sf:#fff;--tx:#15142b;--mu:#6d6b8c;--ac:#6c4cff;--up:#0fa968;--bd:#e2e0f1;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c0b1a;--sf:#171629;--tx:#f2f1ff;--mu:#9a98bd;--ac:#8a6dff;--bd:#2a2848;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c0b1a;--sf:#171629;--tx:#f2f1ff;--mu:#9a98bd;--ac:#8a6dff;--bd:#2a2848;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:520px;margin:0 auto;padding:16px 16px 96px}
+h1{font-size:24px;margin:4px 0 10px}
+.mu{color:var(--mu)}
+.bn{font-size:12px;color:var(--mu);margin-bottom:12px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px}
+.tot{padding:20px;margin-bottom:14px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-radius:20px}
+.tot b{display:block;font-size:36px;margin:2px 0}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}
+.chip{flex:none;padding:8px 14px;border-radius:99px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font:inherit;cursor:pointer}
+.chip.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
+.row{display:flex;gap:12px;align-items:center;padding:10px;margin-bottom:8px;cursor:pointer}
+.th{width:46px;height:64px;border-radius:6px;flex:none;display:grid;place-items:center;color:#fff;overflow:hidden}
+.th img{width:100%;height:100%;object-fit:cover}
+.mid{flex:1;min-width:0}
+.mid b,.mid span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mid span{color:var(--mu);font-size:12px}
+.rt{text-align:right}.pr{font-weight:700}
+.qt{display:inline-flex;align-items:center;gap:8px;margin-top:4px}
+.qt button{width:26px;height:26px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font:inherit;cursor:pointer}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sb{padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.sb em{display:block;font-style:normal;font-size:12px;color:var(--mu);margin-top:4px}
+.lg{position:relative;height:96px;border-radius:14px;color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:8px;overflow:hidden}
+.lg small{font-size:11px;opacity:.85}.lg strong{font-size:17px;line-height:1.15}
+.lg img{max-width:100%;max-height:100%;object-fit:contain}
+.lg.has small,.lg.has strong{display:none}
+input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font:inherit;margin-bottom:12px}
+.bt{width:100%;padding:13px;border:0;border-radius:12px;background:var(--ac);color:var(--on);font:inherit;font-weight:700;cursor:pointer}
+.bt.g{background:var(--sf);color:var(--tx);border:1px solid var(--bd);margin-top:8px}
+.lk{background:none;border:0;color:var(--mu);font:inherit;padding:12px 0;cursor:pointer}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--sf);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;padding:10px 0 8px;border:0;background:none;color:var(--mu);font:inherit;font-size:12px;cursor:pointer}
+nav button.on{color:var(--ac);font-weight:700}
+nav i{display:block;font-style:normal;font-size:20px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;z-index:5}
+.ov[hidden]{display:none}
+.sheet{width:100%;max-width:520px;margin:0 auto;background:var(--sf);border-radius:20px 20px 0 0;padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px));max-height:90vh;overflow:auto}
+.big{width:120px;height:168px;margin:0 auto 12px;font-size:34px}
+.sheet h2{margin:0 0 2px;font-size:20px;text-align:center}.sheet p{text-align:center;margin:0 0 10px}
+.sheet .pr{font-size:28px;text-align:center;margin-bottom:12px}
+.sq{display:flex;justify-content:center;align-items:center;gap:18px;margin-bottom:12px;font-size:20px}
+.sq button{width:40px;height:40px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:20px;cursor:pointer}
+#app h2{font-size:15px;margin:20px 0 8px;color:var(--mu)}
+.cp{padding:14px;margin-bottom:12px}.cp b{display:block;font-size:18px}
+.pg{height:8px;border-radius:99px;background:var(--bd);margin-top:10px;overflow:hidden}.pg i{display:block;height:100%;background:var(--up)}
+.brand{display:flex;align-items:center;gap:10px;max-width:520px;margin:0 auto;padding:16px 16px 0;font-weight:700;font-size:14px;color:var(--mu)}
+.brand i{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-style:normal;display:grid;place-items:center;font-size:15px}
+.list,.top{display:block}
+@media(min-width:900px){
+body{padding-left:210px}
+.brand{position:fixed;top:0;left:0;width:210px;max-width:none;margin:0;padding:22px 20px;z-index:2;font-size:15px;color:var(--tx)}
+nav{top:0;right:auto;width:210px;flex-direction:column;justify-content:flex-start;gap:4px;padding:80px 12px 20px;border-top:0;border-right:1px solid var(--bd)}
+nav button{flex:none;display:flex;align-items:center;gap:12px;text-align:left;padding:12px 14px;border-radius:12px;font-size:15px}
+nav button.on{background:var(--bg)}
+nav i{display:inline;font-size:20px}
+#app{max-width:1180px;padding:28px 36px 48px}
+h1{font-size:28px}
+.top{display:grid;grid-template-columns:minmax(260px,1fr) 2fr;gap:16px;margin-bottom:16px}
+.top .tot,.top .cp{margin:0}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:10px}
+.list .row{margin:0}
+.grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.lg{height:110px}
+.chips{flex-wrap:wrap;overflow:visible}
+.ov{align-items:center}
+.sheet{border-radius:20px;max-width:460px}
+}
+:root{--on:#fff;--ac2:#3a22b8}
+:root[data-theme="green"]{--bg:#07150f;--sf:#0f2218;--tx:#eafff3;--mu:#86b59c;--ac:#2fbf71;--ac2:#127a45;--bd:#1d3b2b;color-scheme:dark}
+:root[data-theme="blue"]{--bg:#06101f;--sf:#0d1b33;--tx:#eaf2ff;--mu:#8aa6cf;--ac:#3b8cff;--ac2:#1b4fb8;--bd:#1c3256;color-scheme:dark}
+:root[data-theme="orange"]{--bg:#170d05;--sf:#261608;--tx:#fff2e6;--mu:#c9a07a;--ac:#ff8a2b;--ac2:#b8500d;--bd:#402611;color-scheme:dark}
+:root[data-theme="yellow"]{--bg:#15120a;--sf:#231e0c;--tx:#fffbe6;--mu:#c9bb7a;--ac:#f2c200;--ac2:#a88400;--bd:#3d3512;--on:#1a1500;color-scheme:dark}
+.vb{font-style:normal;font-size:11px;background:var(--bg);border:1px solid var(--bd);border-radius:99px;padding:1px 8px;margin-left:6px;color:var(--mu);font-weight:400}
+.spr{width:44px;height:44px;flex:none}
+a.bt{display:block;text-align:center;text-decoration:none}
+.ck{font-size:20px;flex:none}
+.chw{position:relative;margin-top:28px;touch-action:pan-y}.chw svg{display:block}
+.tip{position:absolute;top:-6px;left:50%;transform:translate(-50%,-100%);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:4px 8px;font-size:12px;white-space:nowrap;pointer-events:none}
+.tip[hidden]{display:none}
+.scn{position:fixed;inset:0;background:#000;z-index:4;display:flex;flex-direction:column}
+.scn[hidden]{display:none}
+.scn video{flex:1;min-height:0;width:100%;object-fit:cover}
+.scp{background:var(--sf);color:var(--tx);padding:12px;max-height:46vh;overflow:auto}
+.scx{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:12px;width:auto;padding:10px 16px}
+body[data-lay="grid"] .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+body[data-lay="grid"] .list .row{flex-direction:column;align-items:stretch;text-align:center;margin:0}
+body[data-lay="grid"] .list .th{width:100%;height:auto;aspect-ratio:63/88}
+body[data-lay="grid"] .list .th img{object-fit:contain}
+body[data-lay="grid"] .list .spr{width:64px;height:64px;margin:0 auto}
+body[data-lay="grid"] .list .rt{display:flex;justify-content:space-between;align-items:center;text-align:left}
+</style></head><body>
+<div class="brand"><i>H</i><span>Harrylife TCG Manager</span></div><div id="app"></div><nav id="nav"></nav><div id="sh" class="ov" hidden></div><div id="scn" class="scn" hidden></div>
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let FX=1.43,LERR="",CC=null,PC={t:"p"},FERR="";const EM=e=>e.name=="AbortError"?"The card feed took too long to answer.":e.message=="Failed to fetch"?"Couldn’t reach the card feed. Check your connection.":(e.message||"Something went wrong.");const CUR=new Intl.NumberFormat("en-US",{style:"currency",currency:"CAD"});const M=v=>CUR.format((+v||0)*FX);const upd=c=>S.ps.forEach(p=>{const it=p.items[c.id];if(it){it.p=c.p;it.img=c.img;it.imgL=c.imgL;it.num=c.num;it.live=1}});
+
+/* Offline sample data. With the live feed reachable, every set and card loads instead. */
+const SRC=[
+["DR","Mega Evolution—Delta Reign","Nov 6, 2026","#2fbf71","#0b4f8a",141],
+["30C","Pokémon TCG: 30th Celebration","Sep 16, 2026","#f2b01e","#c2401e"],
+["PB","Mega Evolution—Pitch Black","Jul 17, 2026","#4b2f8f","#0a0a1f"],
+["CR","Mega Evolution—Chaos Rising","2026","#d6366b","#37104a"],
+["POR","Mega Evolution—Perfect Order","Mar 27, 2026","#2aa7c9","#1b2a78"],
+["ASC","Mega Evolution—Ascended Heroes","Jan 30, 2026","#e8a33d","#7b2d5f"],
+["PFL","Mega Evolution—Phantasmal Flames","Nov 14, 2025","#ff7a3d","#6b1e2e"],
+["MEG","Mega Evolution","Sep 26, 2025","#7a5cff","#1d1a5c"],
+["PRE","Prismatic Evolutions","Jan 17, 2025","#e56fb3","#4a2a8a"],
+["SSP","Surging Sparks","Nov 8, 2024","#f5d020","#c24a12"],
+["SCR","Stellar Crown","Sep 13, 2024","#3fb6a8","#1a3a6b"]
+];
+const OV={};SRC.forEach(([id,n,d,a,b,t])=>OV[id]={n,d,c:[a,b],t});
+const hue=id=>{let h=0;for(const ch of id)h=(h*31+ch.charCodeAt(0))%360;return["hsl("+h+" 60% 42%)","hsl("+((h+40)%360)+" 55% 22%)"]};
+const MAIN=`Base Sets|1999–2000|BS Base Set,JU Jungle,FO Fossil,B2 Base Set 2,RO Team Rocket
+Gym Series|2000|G1 Gym Heroes,G2 Gym Challenge
+Neo Series|2000–2002|N1 Neo Genesis,N2 Neo Discovery,SI Southern Islands,N3 Neo Revelation,N4 Neo Destiny
+Legendary Collection|2002|LC Legendary Collection
+E-Card Series|2002–2003|EX Expedition Base Set,AQ Aquapolis,SK Skyridge
+EX Series|2003–2007|RS EX Ruby & Sapphire,SS EX Sandstorm,EXD EX Dragon,MA EX Team Magma vs Team Aqua,HL EX Hidden Legends,RG EX FireRed & LeafGreen,TR EX Team Rocket Returns,DX EX Deoxys,EM EX Emerald,UF EX Unseen Forces,DS EX Delta Species,LM EX Legend Maker,HP EX Holon Phantoms,CG EX Crystal Guardians,DF EX Dragon Frontiers,PK EX Power Keepers
+POP Series|2004–2009|POP1 POP Series 1,POP2 POP Series 2,POP3 POP Series 3,POP4 POP Series 4,POP5 POP Series 5,POP6 POP Series 6,POP7 POP Series 7,POP8 POP Series 8,POP9 POP Series 9
+Diamond & Pearl Series|2007–2008|DP Diamond & Pearl,MT Mysterious Treasures,SW Secret Wonders,GE Great Encounters,MD Majestic Dawn,LA Legends Awakened,SF Stormfront
+Platinum Series|2009|PL Platinum,RR Rising Rivals,SV Supreme Victors,AR Arceus,RM Pokémon Rumble
+HeartGold & SoulSilver Series|2010|HS HeartGold & SoulSilver,UL Unleashed,UND Undaunted,TRI Triumphant
+Call of Legends|2011|COL Call of Legends
+Black & White Series|2011–2013|BLW Black & White,EP Emerging Powers,NVI Noble Victories,NXD Next Destinies,DEX Dark Explorers,DRX Dragons Exalted,DRV Dragon Vault,BCR Boundaries Crossed,PLS Plasma Storm,PLF Plasma Freeze,PLB Plasma Blast,LTR Legendary Treasures
+XY Series|2013–2016|KSS Kalos Starter Set,XY XY,FLF Flashfire,FFI Furious Fists,PHF Phantom Forces,PRC Primal Clash,DCR Double Crisis,ROS Roaring Skies,AOR Ancient Origins,BKT BREAKthrough,BKP BREAKpoint,GEN Generations,FCO Fates Collide,STS Steam Siege,EVO Evolutions
+Sun & Moon Series|2017–2019|SUM Sun & Moon,GRI Guardians Rising,BUS Burning Shadows,SLG Shining Legends,CIN Crimson Invasion,UPR Ultra Prism,FLI Forbidden Light,CES Celestial Storm,DRM Dragon Majesty,LOT Lost Thunder,TEU Team Up,DET Detective Pikachu,UNB Unbroken Bonds,UNM Unified Minds,HIF Hidden Fates,CEC Cosmic Eclipse
+Sword & Shield Series|2020–2023|SSH Sword & Shield,RCL Rebel Clash,DAA Darkness Ablaze,CPA Champion’s Path,VIV Vivid Voltage,SHF Shining Fates,BST Battle Styles,CRE Chilling Reign,EVS Evolving Skies,CEL Celebrations,FST Fusion Strike,BRS Brilliant Stars,ASR Astral Radiance,PGO Pokémon GO,LOR Lost Origin,SIT Silver Tempest,CRZ Crown Zenith
+Scarlet & Violet Series|2023–2025|SVI Scarlet & Violet,PAL Paldea Evolved,OBF Obsidian Flames,MEW 151,PAR Paradox Rift,PAF Paldean Fates,TEF Temporal Forces,TWM Twilight Masquerade,SFA Shrouded Fable,SCR Stellar Crown,SSP Surging Sparks,PRE Prismatic Evolutions,JTG Journey Together,DRI Destined Rivals,BLK Black Bolt,WHT White Flare
+Mega Evolution Series|2025–2026|MEG Mega Evolution,PFL Phantasmal Flames,ASC Ascended Heroes,POR Perfect Order,CR Chaos Rising,PB Pitch Black,30C 30th Celebration,DR Delta Reign`;
+const EXTRA=`Black Star Promos||WBSP Wizards Black Star Promos [1999–2003],NBSP Nintendo Black Star Promos [2003–2006],DPBSP DP Black Star Promos [2007–2009],HGSSP HGSS Black Star Promos [2010–2011],BWP BW Black Star Promos [2011–2013],XYP XY Black Star Promos [2013–2017],SMP SM Black Star Promos [2016–2021],SWSHP SWSH Black Star Promos [2019–2023],SVP SVP Black Star Promos [2023–Present],MEP MEP Black Star Promos [2025–Present]
+McDonald’s Collections||MCD11 McDonald’s Collection 2011,MCD12 McDonald’s Collection 2012,MCD13 McDonald’s Collection 2013,MCD14 McDonald’s Collection 2014,MCD15 McDonald’s Collection 2015,MCD16 McDonald’s Collection 2016,MCD17 McDonald’s Collection 2017,MCD18 McDonald’s Collection 2018,MCD19 McDonald’s Collection 2019,MCD21 McDonald’s Collection 2021,MCD22 McDonald’s Collection 2022,MCD23 McDonald’s Collection 2023,MCD24 McDonald’s Collection 2024,MCD26 McDonald’s Collection 2026
+Play! Pokémon Prize Packs||PPS1 Prize Pack Series 1,PPS2 Prize Pack Series 2,PPS3 Prize Pack Series 3,PPS4 Prize Pack Series 4,PPS5 Prize Pack Series 5,PPS6 Prize Pack Series 6,PPS7 Prize Pack Series 7,PPS8 Prize Pack Series 8,PPS9 Prize Pack Series 9
+Trick or Trade||TOT22 Trick or Trade 2022,TOT23 Trick or Trade 2023,TOT24 Trick or Trade 2024`;
+const mkSets=(txt,rev)=>{const a=txt.trim().split("\n").map(l=>{const[n,y,x]=l.split("|");return{n,y,l:x.split(",")}});if(rev){a.reverse();a.forEach(e=>e.l.reverse())}
+return a.flatMap(e=>e.l.map(t=>{const i=t.indexOf(" "),id=t.slice(0,i),o=OV[id]||{};let nm=t.slice(i+1),dt=e.y;const m=/^(.*) \[(.+)\]$/.exec(nm);if(m){nm=m[1];dt=m[2]}return{id,n:o.n||nm,d:o.d||dt,c:o.c||hue(id),t:o.t,e:e.n}}))};
+let SETS=[...mkSets(MAIN,1),...mkSets(EXTRA,0)];
+const CARDS={
+DR:[["Mega Rayquaza ex","Mega Hyper Rare",285],["Mega Golurk ex","Double Rare",3.5],["Mega Malamar ex","Double Rare",3],["Mega Golisopod ex","Double Rare",2.8],["Sprigatito","Illustration Rare",14],["Pincurchin","Illustration Rare",9]],
+POR:[["Mega Zygarde ex","Double Rare",6],["Mega Clefable ex","Double Rare",4.5],["Mega Starmie ex","Double Rare",4],["Mega Skarmory ex","Double Rare",3],["Meowth ex","Double Rare",2.5]],
+ASC:[["Mega Emboar ex","Double Rare",5],["Mega Feraligatr ex","Double Rare",5.5],["Mega Meganium ex","Double Rare",5]],
+PB:[["Mega Darkrai ex","Double Rare",8]],
+PFL:[["Mega Charizard X ex","Double Rare",22]],
+MEG:[["Mega Lucario ex","Double Rare",9],["Mega Gardevoir ex","Double Rare",8]],
+PRE:[["Umbreon ex","Special Illustration Rare",900],["Sylveon ex","Special Illustration Rare",320]],
+SSP:[["Pikachu ex","Special Illustration Rare",420]],
+SCR:[["Terapagos ex","Ultra Rare",18]]
+};
+const cardsOf=sid=>(CARDS[sid]||[]).map((c,i)=>({id:sid+"-"+i,sid,n:c[0],num:String(i+1),r:c[1],p:c[2]}));
+
+/* Price history (saved daily on the server) */
+const RGS=[["1d","1D",864e5],["7d","7D",6048e5],["1m","1M",2592e6],["3m","3M",7776e6],["6m","6M",15552e6],["12m","12M",31536e6],["all","All",0]];
+const HI={},PTS={};
+const dp=(sid,k)=>(String(sid)[0]=="j"?"data/jp/":"data/")+k+"/"+String(sid).replace(/^j/,"")+".json";
+async function hist(g){if(HI[g]===undefined){try{HI[g]=await jget(dp(g,"h"))}catch(e){HI[g]=null}}return HI[g]}
+const win=(a,dur,n)=>{if(!dur)return a.length>1?a:[];const s=n-dur,p=a.filter(q=>q[0]>=s),b=a.filter(q=>q[0]<s).pop();if(b)p.unshift([s,b[1]]);return p.length>1?p:[]};
+const hp=(g,id)=>{const h=HI[g];if(!h||!h.p[id])return[];const o=[];h.d.forEach((d,i)=>{const v=h.p[id][i];if(v!=null)o.push([Date.parse(d+"T20:00:00Z"),v])});return o};
+function pfSeries(dur){const n=Date.now(),p=P(),lg=(p.log||[]).slice().sort((a,b)=>a[0]-b[0]);if(!lg.length)return[];
+const s=dur?n-dur:lg[0][0]-1;if(n-s<6e4)return[];
+const sid={},p0={};lg.forEach(e=>{sid[e[1]]=e[3];if(p0[e[1]]==null)p0[e[1]]=e[4]});
+const ph={};Object.keys(sid).forEach(id=>{let a=id.includes("|")?[]:hp(sid[id],id);if(!a.length)a=[[lg[0][0]-1,p0[id]||0]];const it=p.items[id];if(it)a=[...a,[n,it.p]];ph[id]=a});
+const pr=(id,t)=>{const a=ph[id];let v=a[0][1];for(const q of a){if(q[0]<=t)v=q[1];else break}return v};
+const qn={};lg.forEach(e=>{if(e[0]<=s)qn[e[1]]=(qn[e[1]]||0)+e[2]});
+const ev=lg.filter(e=>e[0]>s),ts=new Set([Math.round(s),n]);for(let i=1;i<48;i++)ts.add(Math.round(s+(n-s)*i/48));ev.forEach(e=>{ts.add(e[0]);ts.add(e[0]-1)});
+const T=[...ts].filter(t=>t>=s&&t<=n).sort((a,b)=>a-b),pts=[];let k=0;
+for(const t of T){while(k<ev.length&&ev[k][0]<=t){qn[ev[k][1]]=(qn[ev[k][1]]||0)+ev[k][2];k++}let v=0;for(const id in qn)if(qn[id]>0)v+=qn[id]*pr(id,t);pts.push([t,v])}
+return pts}
+const seriesFor=(dur,cx)=>cx.t=="c"?win(hp(cx.c.sid,cx.c.id),dur,Date.now()):pfSeries(dur);
+const gsOf=cx=>!cx?[]:cx.t=="c"?[cx.c.sid]:[...new Set((P().log||[]).map(e=>e[3]))];
+async function drawCh(cx,sel){if(!LIVE||!cx)return;await Promise.all(gsOf(cx).map(hist));const c=$(sel);if(c)c.innerHTML=chartHTML(cx)}
+function line(pts,key){const W=320,Hh=120,v=pts.map(p=>p[1]),lo=Math.min(...v),hi=Math.max(...v),t0=pts[0][0],t1=pts[pts.length-1][0],sp=hi-lo||1;
+PTS[key]={pts,t0,t1,lo,sp};
+const X=t=>(t-t0)/((t1-t0)||1)*W,Y=y=>Hh-8-(y-lo)/sp*(Hh-16);
+const d=pts.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[1]).toFixed(1)).join("");const col=v[v.length-1]>=v[0]?"var(--up)":"#e5484d";
+return '<div class="chw" data-k="'+key+'"><div class="tip" hidden></div><svg viewBox="0 0 '+W+" "+Hh+'" width="100%" role="img" aria-label="Price chart"><path d="'+d+"L"+W+" "+Hh+"L0 "+Hh+'Z" fill="'+col+'" opacity=".12"/><path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2" stroke-linejoin="round"/><line class="gl" y1="0" y2="'+Hh+'" stroke="var(--mu)" stroke-width="1" visibility="hidden"/><circle class="gd" r="4" fill="'+col+'" visibility="hidden"/></svg></div>'}
+function hov(e){const w=e.target.closest&&e.target.closest(".chw");if(!w)return;const D=PTS[w.dataset.k];if(!D)return;
+const r=w.getBoundingClientRect(),f=Math.min(1,Math.max(0,(e.clientX-r.left)/(r.width||1))),t=D.t0+f*(D.t1-D.t0);let q=D.pts[0];for(const p of D.pts){if(p[0]<=t)q=p;else break}
+const x=(q[0]-D.t0)/((D.t1-D.t0)||1)*320,y=112-(q[1]-D.lo)/D.sp*104,g=w.querySelector(".gl"),d=w.querySelector(".gd"),tp=w.querySelector(".tip");
+g.setAttribute("x1",x);g.setAttribute("x2",x);g.setAttribute("visibility","visible");d.setAttribute("cx",x);d.setAttribute("cy",y);d.setAttribute("visibility","visible");
+const short=(D.t1-D.t0)<=8*864e5;tp.hidden=false;tp.textContent=M(q[1])+" · "+new Date(q[0]).toLocaleString(undefined,short?{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"}:{month:"short",day:"numeric",year:"numeric"});
+tp.style.left=Math.min(Math.max(f*100,20),80)+"%"}
+function hovOut(e){const w=e.target.closest&&e.target.closest(".chw");if(w&&!w.contains(e.relatedTarget)){w.querySelector(".gl").setAttribute("visibility","hidden");w.querySelector(".gd").setAttribute("visibility","hidden");w.querySelector(".tip").hidden=true}}
+function chartHTML(cx){const cur=S.rg||"1m",dur=(RGS.find(r=>r[0]==cur)||RGS[2])[2],pf=cx&&cx.t=="p";
+const chips=(pf?"<b>Portfolio value</b>":"")+'<div class="chips">'+RGS.map(r=>'<button class="chip '+(r[0]==cur?"on":"")+'" data-rg="'+r[0]+'">'+r[1]+"</button>").join("")+"</div>";
+if(!LIVE)return chips+'<p class="mu">Price history needs live prices. It works once the app is hosted online.</p>';
+if(gsOf(cx).some(g=>HI[g]===undefined))return chips+'<p class="mu">Loading price history…</p>';
+const pts=cx?seriesFor(dur,cx):[];
+if(pts.length<2)return chips+'<p class="mu">Not enough history in this range yet. '+(pf?"The graph moves as you add cards and prices change.":"A new price is saved once a day.")+"</p>";
+const a=pts[0][1],b=pts[pts.length-1][1],pc=a?(b-a)/a*100:0,v=pts.map(p=>p[1]);
+return chips+line(pts,cx.t)+'<div class="bn" style="display:flex;justify-content:space-between"><span>'+(a?(pc>=0?"+":"")+pc.toFixed(1)+"% in range":"Started at "+M(0))+"</span><span>"+M(Math.min(...v))+" – "+M(Math.max(...v))+'</span></div><div class="bn">'+(pf?"Total value of this portfolio over time. Hover or touch the graph for exact values.":"Daily TCGplayer market prices. Hover or touch for exact values.")+"</div>"}
+
+/* State */
+let S={ps:[{id:1,name:"My Collection",items:{}}],a:1,tab:"p"},SS=null,LIVE=false,SQ=1,LC={},R={};
+try{const j=localStorage.getItem("ct1");if(j)S=JSON.parse(j)}catch(e){}
+S.tab="p";S.dp=null;S.fl="c";
+const save=()=>{try{localStorage.setItem("ct1",JSON.stringify(S))}catch(e){}push()};
+const P=()=>S.ps.find(p=>p.id==S.a)||S.ps[0];
+const setOf=id=>SETS.find(s=>s.id==id)||JPS.find(s=>s.id==id)||{n:"",d:"",c:["#6c4cff","#2a1a6e"]};
+const reg=c=>(R[c.id]=c);
+
+/* Live data: files on this site, built daily from TCGplayer prices by sync.py */
+let JPS=[],JPERR="",IDX=null,JIDX=null,BYPID=null,DEX=null,DEXERR="",TRD=null,TRDERR="",AUTHR=0,GM=0,SEL=new Set(),SELM=0;
+const jget=async p=>{const r=await fetch(p,{cache:"no-cache"});if(!r.ok)throw new Error("Couldn’t load "+p+" (error "+r.status+"). Has the daily sync run yet?");return r.json()};
+const IMG=(id,big)=>"https://tcgplayer-cdn.tcgplayer.com/product/"+id+(big?"_in_1000x1000.jpg":"_200w.jpg");
+const cd=(c,g)=>{const pid=c[6]||c[0];return{id:String(c[0]),sid:String(g),n:c[1],num:c[2],r:c[3],p:c[4]||0,v:c[5]||"",pid:String(pid),img:IMG(pid),imgL:IMG(pid,1),live:1,sl:c[2]?0:1}};
+async function getCards(sid){if(!LIVE)return cardsOf(sid);if(!LC[sid]){try{LC[sid]=(await jget(dp(sid,"s"))).c.map(c=>cd(c,sid));LC[sid].forEach(upd)}catch(e){LERR=EM(e);return[]}}LERR="";return LC[sid]}
+async function loadIdx(){if(!IDX)IDX=await jget("data/idx.json");return IDX}
+async function loadJIdx(){if(!JIDX)JIDX=await jget("data/jp/idx.json");return JIDX}
+async function byPid(){await loadIdx();if(!BYPID){BYPID={};for(const r of IDX){const k=r[7]||r[0];(BYPID[k]=BYPID[k]||[]).push(r)}}return BYPID}
+async function findCards(q){await loadIdx();const t=q.split(/\s+/).filter(Boolean),f=t[0],o=[];
+for(const r of IDX){const nm=r[2].toLowerCase();if(t.every(w=>nm.includes(w)))o.push(r)}
+o.sort((a,b)=>(+b[2].toLowerCase().startsWith(f)-+a[2].toLowerCase().startsWith(f))||(b[5]||0)-(a[5]||0));
+return o.slice(0,60).map(r=>cd([r[0],r[2],r[3],r[4],r[5],r[6],r[7]],r[1]))}
+async function loadJP(){if(JPS.length)return;try{const d=await jget("data/jp/sets.json");JPS=d.map(s=>({id:"j"+s.g,n:s.n,d:s.d,logo:null,c:hue("j"+s.g),t:s.t,e:s.d.slice(0,4)}))}catch(e){JPERR=EM(e)}}
+const GEN=id=>id<=151?1:id<=251?2:id<=386?3:id<=493?4:id<=649?5:id<=721?6:id<=809?7:id<=905?8:9;
+const SPR=id=>"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"+id+".png";
+async function loadDex(){if(!DEX){try{DEX=await jget("data/dex.json")}catch(e){DEXERR=EM(e)}}return DEX}
+async function loadTrd(){if(!TRD){try{TRD=await jget("data/trending.json")}catch(e){TRDERR=EM(e)}}return TRD}
+async function init(){try{const d=await jget("data/sets.json");const MISC=/latias|latios|plusle|minun|nintendo promo|^pop series \d|alternate art promo|alt\.? art promo|blister exclusive|burger king|first partner pack|miscellaneous|misc\.|pikachu world collection|professor program/i;SETS=d.map(s=>({id:String(s.g),n:s.n,d:s.d,logo:s.l,c:hue(String(s.g)),t:s.t,e:MISC.test(s.n)?"Misc.":s.d.slice(0,4)}));SETS=[...SETS.filter(s=>s.e!="Misc."),...SETS.filter(s=>s.e=="Misc.").sort((a,b)=>a.n.localeCompare(b.n))];LIVE=true;render()}catch(e){FERR=EM(e);render();return}
+try{for(const g of new Set(S.ps.flatMap(p=>Object.values(p.items).map(x=>x.sid))))await getCards(g);save();render()}catch(e){}
+try{const r=await fetch("https://open.er-api.com/v6/latest/USD");FX=(await r.json()).rates.CAD||FX;render()}catch(e){}}
+
+/* Pieces */
+const bn=()=>'<div class="bn">'+(LIVE?"TCGplayer market prices in CAD, updated daily":(FERR?"Live feed unavailable: "+FERR+" Showing sample data.":"Sample cards and demo prices in CAD. Live prices and card images load when the page is hosted online."))+" · USD→CAD "+FX.toFixed(2)+"</div>";
+function logo(s){const p=s.n.split("—"),a=p.length>1?p[0]:"",b=p.length>1?p[1]:s.n;return '<div class="lg'+(s.logo?" has":"")+'" style="background:linear-gradient(150deg,'+s.c[0]+","+s.c[1]+')">'+(s.logo?'<img src="'+E(s.logo)+'" alt="" onerror="this.parentNode.classList.remove(\'has\');this.remove()">':"")+"<small>"+E(a)+"</small><strong>"+E(b)+"</strong></div>"}
+function thumb(c,cls){const s=setOf(c.sid);return '<div class="th '+(cls||"")+'" style="background:linear-gradient(150deg,'+s.c[0]+","+s.c[1]+')">'+(c.img?'<img src="'+E(cls=="big"&&c.imgL||c.img)+'" alt="" onerror="this.remove()">':"✦")+"</div>"}
+function row(c,right){reg(c);const b=c.gr||c.v;return '<div class="card row" data-c="'+E(c.id)+'">'+thumb(c)+'<div class="mid"><b>'+E(c.n)+(b?' <em class="vb">'+E(b)+"</em>":"")+"</b><span>"+(c.live&&c.num?"#"+E(c.num)+" · ":"")+E(setOf(c.sid).n)+(c.r?" · "+E(c.r):"")+"</span></div>"+right+"</div>"}
+function tabs(){$("#nav").innerHTML=[["p","💼","Portfolio"],["s","📚","Sets"],["scan","📷","Scan"],["d","📖","Pokédex"],["q","🔍","Search"],["a","⚙️","Settings"]].map(([k,i,l])=>"<button "+(k=="scan"?"data-scan":'data-t="'+k+'"')+' class="'+(S.tab==k?"on":"")+'"><i>'+i+"</i>"+l+"</button>").join("")}
+
+const qty=x=>'<div class="rt"><div class="pr">'+M(x.q*x.p)+'</div><div class="qt"><button data-q="'+E(x.id)+':-1">−</button>'+x.q+'<button data-q="'+E(x.id)+':1">＋</button></div></div>';
+function rowS(x){const h=row(x,qty(x));return SELM?h.replace('data-c="','data-sel="').replace('<div class="th','<span class="ck">'+(SEL.has(x.id)?"☑":"☐")+'</span><div class="th'):h}
+function vP(){const p=P(),its=Object.entries(p.items).map(([id,x])=>({id,...x}));
+const tot=its.reduce((t,x)=>t+x.q*x.p,0),n=its.reduce((t,x)=>t+x.q,0),top=[...its].sort((a,b)=>b.p-a.p).slice(0,5);
+const others=S.ps.filter(q=>q.id!=p.id);
+const bar=SELM?'<div class="card cp"><b>'+SEL.size+' selected</b><div class="chips" style="margin-top:8px"><button class="chip" data-sa>Select all</button><button class="chip" data-sm>Cancel</button></div>'+(others.length?'<select id="mvt">'+others.map(q=>'<option value="'+q.id+'">'+E(q.name)+"</option>").join("")+'</select><button class="bt" data-mv>Move selected to chosen portfolio</button>':'<p class="mu">Create a second portfolio to move cards.</p>')+"</div>":"";
+return "<h1>Portfolio</h1>"+bn()+'<div class="chips">'+S.ps.map(q=>'<button class="chip '+(q.id==p.id?"on":"")+'" data-p="'+q.id+'">'+E(q.name)+"</button>").join("")+'<button class="chip" data-np>＋ New</button><button class="chip" data-mg>Manage</button></div>'+
+'<div class="top"><div class="tot"><small>Total value</small><b>'+M(tot)+"</b><small>"+n+" cards · "+its.length+" unique</small></div>"+(its.length?'<div class="card cp" id="chp" data-cx="p">'+chartHTML(PC)+"</div>":"")+"</div>"+
+(its.length?'<h2>Most valuable</h2><div class="list">'+top.map(x=>row(x,'<div class="rt"><div class="pr">'+M(x.p)+'</div><div class="mu" style="font-size:12px">×'+x.q+"</div></div>")).join("")+'</div><h2>All cards <button class="chip" data-sm>'+(SELM?"Done":"Select")+"</button></h2>"+bar+'<div class="list">'+its.map(rowS).join("")+"</div>":'<p class="mu">This portfolio is empty. Search for a card or open a set to add your first one.</p><button class="bt" data-t="q">Search cards</button>')+
+(S.ps.length>1?'<button class="lk" data-del>Delete this portfolio</button>':"")}
+function moveSel(to){const src=P(),dst=S.ps.find(p=>p.id==to);if(!dst||dst===src||!SEL.size)return;const ts=Date.now();
+SEL.forEach(id=>{const it=src.items[id];if(!it)return;(src.log=src.log||[]).push([ts,id,-it.q,it.sid,it.p]);(dst.log=dst.log||[]).push([ts,id,it.q,it.sid,it.p]);const t=dst.items[id];if(t)t.q+=it.q;else dst.items[id]={...it};delete src.items[id]});
+SEL.clear();SELM=0;save();render()}
+const own=sid=>new Set(Object.values(P().items).filter(x=>x.sid==sid&&!x.sl).map(x=>x.pid||x.id)).size;
+const prog=s=>{const n=own(s.id);return s.t?n+"/"+s.t+" · "+Math.floor(n/s.t*100)+"%":(n?n+" owned":"")};
+function vSets(){const L=S.lang=="jp",A=L?JPS:SETS;let last,h="";for(const s of A){if(s.e!==last){h+=(last!==undefined?"</div>":"")+"<h2>"+E(s.e)+'</h2><div class="grid">';last=s.e}h+='<button class="sb" data-s="'+E(s.id)+'">'+logo(s)+"<em>"+E(s.d)+(prog(s)?(s.d?" · ":"")+prog(s):"")+"</em></button>"}
+return "<h1>Sets</h1>"+bn()+'<div class="chips">'+[["en","English"],["jp","Japanese"]].map(f=>'<button class="chip '+(f[0]==(L?"jp":"en")?"on":"")+'" data-lg="'+f[0]+'">'+f[1]+"</button>").join("")+"</div>"+(L&&!JPS.length?'<p class="mu">'+E(JPERR||"Loading Japanese sets…")+"</p>":"")+h+(h?"</div>":"")}
+const sl=c=>c.sl?1:0;const num=c=>{const m=String(c.num||"").match(/\d+/);return m?+m[0]:0};
+const SORTS={pa:(a,b)=>a.p-b.p,pd:(a,b)=>b.p-a.p,na:(a,b)=>sl(a)-sl(b)||num(a)-num(b)||String(a.num).localeCompare(String(b.num)),nd:(a,b)=>sl(a)-sl(b)||num(b)-num(a)||String(b.num).localeCompare(String(a.num)),az:(a,b)=>a.n.localeCompare(b.n)};
+const SN={pa:"Price Low - High",pd:"Price High - Low",na:"Card NO Low - High",nd:"Card NO High - Low",az:"Card Name A - Z"};
+function addC(c,n,p,ns){p=p||P();const it=p.items[c.id]||(p.items[c.id]={q:0});Object.assign(it,{n:c.n,sid:c.sid,r:c.r,p:c.p,img:c.img,imgL:c.imgL,num:c.num,live:c.live,sl:c.sl,v:c.v,pid:c.pid,gr:c.gr});(p.log=p.log||[]).push([Date.now(),c.id,n,c.sid,c.p]);it.q+=n;if(it.q<=0)delete p.items[c.id];if(!ns)save()}
+const rt=c=>{const it=P().items[c.id],q=it?it.q:0;return '<div class="rt"><div class="pr">'+M(c.p)+"</div>"+(c.pct!=null?'<div class="mu" style="font-size:11px">'+(c.pct>=0?"+":"")+c.pct.toFixed(1)+"% 7d</div>":"")+'<div class="qt">'+(q?'<button data-q="'+E(c.id)+':-1">−</button>'+q:"")+'<button data-ad="'+E(c.id)+'">＋</button></div></div>'};
+const prims=cs=>cs.filter(c=>!c.sl&&c.id==c.pid);
+const haveP=p=>new Set(Object.values(p.items).map(x=>x.pid||x.id));
+async function allDlg(){const cs=prims(await getCards(SS)),p=P(),hv=haveP(p),miss=cs.filter(c=>!hv.has(c.pid)).length;
+sheet('<h2>Add all cards</h2><p class="mu">'+(miss?"Adds 1 of each of the "+miss+" cards you don’t have yet from “"+E(setOf(SS).n)+"” (the main printing of each). Sealed products are not included.":"You already have every card from this set.")+"</p>"+(miss?'<select id="ps2">'+S.ps.map(q=>'<option value="'+q.id+'"'+(q.id==S.a?" selected":"")+">"+E(q.name)+"</option>").join("")+'</select><button class="bt" data-ally>Add '+miss+" cards</button>":"")+'<button class="bt g" data-x>'+(miss?"Cancel":"Close")+"</button>")}
+async function allGo(){const cs=prims(await getCards(SS)),p=S.ps.find(q=>q.id==$("#ps2").value)||P(),hv=haveP(p);cs.forEach(c=>{if(!hv.has(c.pid))addC(c,1,p,1)});S.a=p.id;save();closeS();render()}
+function vSet(s,cs){const n=own(s.id),t=s.t||0,pc=t?Math.floor(n/t*100):0,so=S.sort||"na",fl=S.fl||"c";
+const shown=cs.filter(c=>fl=="all"||(fl=="c")==!c.sl);
+return '<button class="lk" data-back>‹ All sets</button>'+logo(s)+"<h1>"+E(s.n)+"</h1>"+bn()+'<div class="card cp"><b>'+(t?pc+"% complete":n+" cards owned")+'</b><span class="mu">'+(t?n+" of "+t+" cards in this portfolio":"Total card count loads with live data")+'</span><div class="pg"><i style="width:'+pc+'%"></i></div></div>'+
+(cs.length?(cs.some(c=>!c.sl)?'<button class="bt" data-all>Add all cards from this set</button>':"")+'<div class="chips" style="margin-top:12px">'+[["c","Cards"],["s","Sealed"],["all","All"]].map(f=>'<button class="chip '+(f[0]==fl?"on":"")+'" data-fl="'+f[0]+'">'+f[1]+"</button>").join("")+'</div><select id="so">'+Object.keys(SN).map(k=>'<option value="'+k+'"'+(k==so?" selected":"")+">"+SN[k]+"</option>").join("")+'</select><div class="list">'+[...shown].sort(SORTS[so]).map(c=>row(c,rt(c))).join("")+"</div>"+(shown.length?"":'<p class="mu">'+(fl=="s"?"No sealed products are in the data for this set yet.":"Nothing to show.")+"</p>"):(LIVE?'<p class="mu">'+E(LERR||"There are no cards or products for this set yet. New sets can take a few days to appear.")+"</p>"+(LERR?'<button class="bt" data-rt>Try again</button>':""):'<p class="mu">This set’s card list isn’t in the offline sample. It loads when the page is hosted online.</p>'))}
+function trendHTML(){if(!LIVE)return '<p class="mu">Trending cards appear once live data is available.</p>';if(!TRD)return '<p class="mu">'+E(TRDERR||"Loading trending cards…")+"</p>";const cs=TRD.t.map(r=>({...cd([r[0],r[2],r[3],r[4],r[5],r[6],r[7]],r[1]),pct:r[8]}));return "<h2>Trending"+(TRD.b?" · "+E(TRD.b):"")+'</h2><div class="list">'+cs.map(c=>row(c,rt(c))).join("")+"</div>"}
+function vQ(){return "<h1>Search</h1>"+bn()+'<input id="qi" type="search" placeholder="Search any card or sealed product" autocomplete="off"><div id="res">'+trendHTML()+"</div>"}
+const DS={pd:(a,b)=>b.p-a.p,pa:(a,b)=>a.p-b.p,az:(a,b)=>a.n.localeCompare(b.n)||b.p-a.p,st:(a,b)=>setOf(a.sid).n.localeCompare(setOf(b.sid).n)||b.p-a.p};
+const DN={pd:"Price High - Low",pa:"Price Low - High",az:"Card Name A - Z",st:"Set A - Z"};
+function dexList(q){q=(q||"").trim().toLowerCase();const L=DEX.n.filter(p=>!q||p[1].toLowerCase().includes(q)||String(p[0])==q);
+const it=p=>'<div class="card row" data-dx="'+p[0]+'"><img class="spr" loading="lazy" src="'+SPR(p[0])+'" alt="" onerror="this.remove()"><div class="mid"><b>'+E(p[1])+"</b><span>#"+String(p[0]).padStart(3,"0")+" · Gen "+GEN(p[0])+'</span></div><div class="mu">'+p[2]+" cards</div></div>";
+if(S.dx!="g")return L.length?'<div class="list">'+L.map(it).join("")+"</div>":'<p class="mu">No Pokémon match.</p>';
+let h="";for(let g=1;g<=9;g++){const a=L.filter(p=>GEN(p[0])==g);if(a.length)h+="<h2>Generation "+g+"</h2>"+'<div class="list">'+a.map(it).join("")+"</div>"}return h||'<p class="mu">No Pokémon match.</p>'}
+function vD(){return "<h1>Pokédex</h1>"+bn()+'<div class="chips">'+[["n","By Pokédex number"],["g","By generation (1-9)"]].map(f=>'<button class="chip '+(f[0]==(S.dx=="g"?"g":"n")?"on":"")+'" data-dm="'+f[0]+'">'+f[1]+"</button>").join("")+'</div><input id="dq" placeholder="Search Pokémon name or number" autocomplete="off"><div id="dxl">'+dexList("")+"</div>"}
+async function dexPage(){const id=S.dp,pk=DEX.n.find(x=>x[0]==id);if(!pk)return '<button class="lk" data-dback>‹ Pokédex</button><p class="mu">Pokémon not found.</p>';
+const bp=await byPid(),rows=[];(DEX.m[id]||[]).forEach(pid=>(bp[pid]||[]).forEach(r=>rows.push(cd([r[0],r[2],r[3],r[4],r[5],r[6],r[7]],r[1]))));
+const so=S.dso||"pd",lim=S.dlim||150;rows.sort(DS[so]);
+return '<button class="lk" data-dback>‹ Pokédex</button><div class="card row" style="cursor:default"><img class="spr" src="'+SPR(id)+'" alt="" onerror="this.remove()"><div class="mid"><b>'+E(pk[1])+"</b><span>#"+String(id).padStart(3,"0")+" · Generation "+GEN(id)+" · "+rows.length+' listings</span></div></div><select id="dso">'+Object.entries(DN).map(([k,v])=>'<option value="'+k+'"'+(k==so?" selected":"")+">"+v+"</option>").join("")+'</select><div class="list">'+rows.slice(0,lim).map(c=>row(c,rt(c))).join("")+"</div>"+(rows.length>lim?'<button class="bt g" data-more>Show more ('+(rows.length-lim)+" left)</button>":"")}
+async function dexRender(a){if(!LIVE){a.innerHTML="<h1>Pokédex</h1>"+bn()+'<p class="mu">The Pokédex needs live data.</p>';return}
+if(!DEX){a.innerHTML='<p class="mu">Loading Pokédex…</p>';await loadDex();if(!DEX){a.innerHTML="<h1>Pokédex</h1><p class=\"mu\">"+E(DEXERR||"Couldn’t load the Pokédex.")+" It is built by the daily data sync.</p>";return}}
+if(S.dp){a.innerHTML='<p class="mu">Loading cards…</p>';try{a.innerHTML=await dexPage()}catch(e){a.innerHTML='<p class="mu">'+E(EM(e))+"</p>"}return}
+a.innerHTML=vD();$("#dq").oninput=e=>{$("#dxl").innerHTML=dexList(e.target.value)}}
+function migrate(){let ch=0;S.ps.forEach(p=>{const lg=p.log||(p.log=[]),has=new Set(lg.map(e=>e[1]));for(const id in p.items){if(!has.has(id)){const x=p.items[id];lg.push([Date.now(),id,x.q,x.sid,x.p]);ch=1}}});if(ch)save()}
+async function render(){migrate();tabs();const a=$("#app");
+if(S.tab=="p"){a.innerHTML=vP();drawCh(PC,"#chp")}
+else if(S.tab=="s"){if(SS){if(!LC[SS])a.innerHTML='<p class="mu">Loading…</p>';const cs=await getCards(SS);a.innerHTML=vSet(setOf(SS),cs)}else a.innerHTML=vSets()}
+else if(S.tab=="d")await dexRender(a);
+else if(S.tab=="a")a.innerHTML=vSettings();
+else{a.innerHTML=vQ();const q=$("#qi");q.oninput=e=>search(e.target.value);if(LIVE&&!TRD)loadTrd().then(()=>{if(S.tab=="q"&&!q.value)$("#res").innerHTML=trendHTML()})}}
+let tm;function search(q){q=q.trim().toLowerCase();const r=$("#res");clearTimeout(tm);
+if(!q){r.innerHTML=trendHTML();return}
+const show=cs=>{r.innerHTML=cs.length?'<div class="list">'+cs.map(c=>row(c,rt(c))).join("")+"</div>":'<p class="mu">No cards match “'+E(q)+"”.</p>"};
+if(LIVE)tm=setTimeout(async()=>{try{show(await findCards(q))}catch(e){r.innerHTML='<p class="mu">'+E(EM(e))+"</p>"}},250);
+else show(SETS.flatMap(s=>cardsOf(s.id)).filter(c=>c.n.toLowerCase().includes(q)||setOf(c.sid).n.toLowerCase().includes(q)))}
+
+/* Sheets */
+function sheet(h){const o=$("#sh");o.innerHTML='<div class="sheet">'+h+"</div>";o.hidden=false}
+const closeS=()=>{$("#sh").hidden=true};
+const GRS=["10","9.5","9","8.5","8","7","6","5","4","3","2","1"];
+const est=(c,g)=>c.p*({"10":3.5,"9.5":2.2,"9":1.6,"8.5":1.3,"8":1.2,"7":1.05,"6":.95,"5":.9}[g]||.8)*FX;
+function grUpd(){const c=CC&&CC.c,g=$("#ggr"),x=$("#gpr");if(c&&g&&x)x.value=est(c,g.value).toFixed(2)}
+function vC(c){SQ=1;GM=0;CC={t:"c",c};sheet(thumb(c,"big")+"<h2>"+E(c.n)+'</h2><p class="mu">'+E(setOf(c.sid).n)+(c.r?" · "+E(c.r):"")+(c.v?" · "+E(c.v):"")+'</p><div class="pr">'+M(c.p)+'</div><div id="chc" data-cx="c">'+chartHTML(CC)+'</div><div class="sq"><button data-sq="-1">−</button><b id="sqn">1</b><button data-sq="1">＋</button></div>'+
+(c.sl?"":'<div class="chips" style="justify-content:center"><button class="chip on" data-gm="0">Raw</button><button class="chip" data-gm="1">Graded</button></div><div id="grx" hidden><select id="gco">'+["PSA","BGS","CGC","SGC","TAG","ACE","Other"].map(x=>"<option>"+x+"</option>").join("")+'</select><select id="ggr">'+GRS.map(x=>"<option>"+x+"</option>").join("")+'</select><input id="gpr" type="number" step="0.01" min="0" placeholder="Price in CAD"><p class="mu" style="text-align:left">Estimated from the raw price. Edit it to match real sales for this company and grade.</p></div>')+
+'<select id="ps">'+S.ps.map(p=>'<option value="'+p.id+'"'+(p.id==S.a?" selected":"")+">"+E(p.name)+"</option>").join("")+'</select><button class="bt" data-add="'+E(c.id)+'">Add to portfolio</button><button class="bt g" data-x>Close</button>');drawCh(CC,"#chc")}
+function vMg(){sheet("<h2>Manage portfolios</h2>"+S.ps.map((p,i)=>'<div class="card row" style="cursor:default"><div class="mid"><b>'+E(p.name)+"</b><span>"+Object.keys(p.items).length+' cards</span></div><button class="chip" data-up="'+i+'">▲</button><button class="chip" data-dn="'+i+'">▼</button><button class="chip" data-rn="'+p.id+'">Rename</button></div>').join("")+'<button class="bt" data-np>＋ New portfolio</button><button class="bt g" data-x>Done</button>')}
+function vRn(id){const p=S.ps.find(x=>x.id==id);if(!p)return;sheet('<h2>Rename portfolio</h2><input id="rnm" value="'+E(p.name)+'"><button class="bt" data-rs="'+p.id+'">Save</button><button class="bt g" data-x>Cancel</button>')}
+function vNew(){sheet('<h2>New portfolio</h2><p class="mu">Make as many as you like.</p><input id="pn" placeholder="Portfolio name" value="Portfolio '+(S.ps.length+1)+'"><button class="bt" data-mk>Create portfolio</button><button class="bt g" data-x>Cancel</button>')}
+
+document.addEventListener("click",e=>{const t=e.target.closest("[data-t],[data-p],[data-np],[data-s],[data-q],[data-c],[data-add],[data-x],[data-back],[data-del],[data-dy],[data-mk],[data-sq],[data-au],[data-go],[data-out],[data-fp],[data-rt],[data-rg],[data-ad],[data-all],[data-ally],[data-fl],[data-lg],[data-dx],[data-dback],[data-dm],[data-more],[data-sm],[data-sa],[data-sel],[data-mv],[data-mg],[data-up],[data-dn],[data-rn],[data-rs],[data-th],[data-ly],[data-dc],[data-wl],[data-gm],[data-scan],[data-sx]");if(!t)return;const d=t.dataset;
+if("au"in d){AM=AM=="in"?"up":"in";AE="";render()}
+else if("go"in d)authGo();
+else if("fp"in d)resetPw();
+else if("out"in d)signOut();
+else if("t"in d){S.tab=d.t;SS=null;S.dp=null;closeS();render()}
+else if("scan"in d)scanOpen();
+else if("sx"in d)scanClose();
+else if("p"in d){S.a=+d.p;SEL.clear();SELM=0;save();render()}
+else if("np"in d)vNew();
+else if("mk"in d){const n=($("#pn").value||"").trim()||"Portfolio "+(S.ps.length+1),id=Date.now();S.ps.push({id,name:n,items:{},log:[]});S.a=id;S.tab="p";save();closeS();render()}
+else if("s"in d){SS=d.s;S.fl="c";scrollTo(0,0);render()}
+else if("back"in d){SS=null;render()}
+else if("q"in d){const i=d.q.lastIndexOf(":"),id=d.q.slice(0,i),dq=+d.q.slice(i+1),p=P(),it=p.items[id];if(it){(p.log=p.log||[]).push([Date.now(),id,dq,it.sid,it.p]);it.q+=dq;if(it.q<=0)delete p.items[id];save();render()}}
+else if("c"in d){const c=R[d.c];if(c)vC(c)}
+else if("sq"in d){SQ=Math.max(1,SQ+ +d.sq);$("#sqn").textContent=SQ}
+else if("gm"in d){GM=+d.gm;$("#grx").hidden=!GM;document.querySelectorAll("[data-gm]").forEach(b=>b.classList.toggle("on",b.dataset.gm==String(GM)));if(GM)grUpd()}
+else if("add"in d){let c=R[d.add];const p=S.ps.find(x=>x.id==$("#ps").value)||P();if(c){if(GM){const co=$("#gco").value,g=$("#ggr").value,cad=+$("#gpr").value||est(c,g);c={...c,id:c.id+"|"+co+" "+g,gr:co+" "+g,p:cad/FX}}addC(c,SQ,p);S.a=p.id;save()}closeS();if(S.tab=="p")render()}
+else if("del"in d)sheet('<h2>Delete “'+E(P().name)+'”?</h2><p class="mu">Its cards are removed from your totals.</p><button class="bt" data-dy>Delete portfolio</button><button class="bt g" data-x>Keep it</button>');
+else if("dy"in d){S.ps=S.ps.filter(p=>p.id!=S.a);S.a=S.ps[0].id;save();closeS();render()}
+else if("rt"in d)render();
+else if("rg"in d){S.rg=d.rg;const b=t.closest("[data-cx]");if(b)b.innerHTML=chartHTML(b.dataset.cx=="p"?PC:CC)}
+else if("ad"in d){const c=R[d.ad];if(c){addC(c,1);const sc=$("#scn");if(sc&&!sc.hidden)scanRender();else if(S.tab=="q")search(($("#qi")||{}).value||"");else render()}}
+else if("fl"in d){S.fl=d.fl;render()}
+else if("all"in d)allDlg();
+else if("ally"in d)allGo();
+else if("lg"in d){S.lang=d.lg;if(d.lg=="jp"&&!JPS.length)loadJP().then(render);render()}
+else if("dx"in d){S.dp=+d.dx;scrollTo(0,0);render()}
+else if("dback"in d){S.dp=null;render()}
+else if("dm"in d){S.dx=d.dm;render()}
+else if("more"in d){S.dlim=(S.dlim||150)+150;render()}
+else if("sm"in d){SELM=!SELM;SEL.clear();render()}
+else if("sa"in d){Object.keys(P().items).forEach(id=>SEL.add(id));render()}
+else if("sel"in d){const id=d.sel;SEL.has(id)?SEL.delete(id):SEL.add(id);render()}
+else if("mv"in d)moveSel($("#mvt")&&$("#mvt").value);
+else if("mg"in d)vMg();
+else if("up"in d||"dn"in d){const up=d.up!==undefined,i=+(up?d.up:d.dn),j=up?i-1:i+1;if(j>=0&&j<S.ps.length){[S.ps[i],S.ps[j]]=[S.ps[j],S.ps[i]];save();vMg();render()}}
+else if("rn"in d)vRn(+d.rn);
+else if("rs"in d){const p=S.ps.find(x=>x.id==d.rs),nm=($("#rnm").value||"").trim();if(p&&nm){p.name=nm;save()}closeS();render()}
+else if("th"in d){CF.theme=d.th;applyCF();render()}
+else if("ly"in d){const[k,v]=d.ly.split(":");CF[k]=v;applyCF();render()}
+else if("dc"in d)discord(1);
+else if("wl"in d){closeS();if(d.wl=="in"){S.tab="a";AM="in";render()}else discord()}
+else if("x"in d&&(t.tagName=="BUTTON"||e.target==t))closeS()});
+document.addEventListener("change",e=>{const id=e.target.id;if(id=="so"){S.sort=e.target.value;save();render()}else if(id=="dso"){S.dso=e.target.value;render()}else if(id=="gco"||id=="ggr")grUpd()});
+if(!S.ps||!S.ps.length)S={ps:[{id:1,name:"My Collection",items:{}}],a:1,tab:"p"};
+/* Account + cloud sync (Firebase) */
+const CFG=window.FB_CONFIG,OK=!!(CFG&&CFG.apiKey&&!/PASTE/.test(CFG.apiKey));
+let FA=null,FD=null,FU=null,AM="in",AE="",AX="",AOK=0,ST="",unsub=null,pt=null;
+const AER={"auth/invalid-credential":"Wrong email or password.","auth/invalid-email":"That email doesn’t look right.","auth/email-already-in-use":"That email already has an account.","auth/weak-password":"Password needs at least 6 characters.","auth/too-many-requests":"Too many tries. Wait a minute and try again.","auth/network-request-failed":"No connection. Check your internet."};
+const pay=()=>JSON.stringify({ps:S.ps,a:S.a,sort:S.sort});
+const ld=u=>new Promise((r,j)=>{const s=document.createElement("script");s.src=u;s.onload=r;s.onerror=j;document.head.append(s)});
+const redo=()=>{if(S.tab=="a")render()};
+function push(){if(!FU||!FD)return;clearTimeout(pt);pt=setTimeout(()=>{FD.doc("users/"+FU.uid).set({data:pay(),updated:Date.now()},{merge:true}).then(()=>{ST="Synced "+new Date().toLocaleTimeString();redo()}).catch(e=>{ST="Sync error: "+e.code;redo()})},800)}
+function listen(){let first=true;unsub=FD.doc("users/"+FU.uid).onSnapshot(s=>{if(s.metadata.hasPendingWrites)return;const d=s.exists?s.data().data:null;
+if(d&&d!==pay()){try{const c=JSON.parse(d);if(first)try{localStorage.setItem("ct1_backup",JSON.stringify(S))}catch(e){}S.ps=c.ps;S.a=c.a;S.sort=c.sort;try{localStorage.setItem("ct1",JSON.stringify(S))}catch(e){}render()}catch(e){}}
+else if(!d&&first)push();
+first=false;ST="Synced "+new Date().toLocaleTimeString();redo()},e=>{ST="Sync error: "+e.code;redo()})}
+async function fbInit(){if("serviceWorker"in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register("sw.js").catch(()=>{});
+if(!OK)return;try{const b="https://www.gstatic.com/firebasejs/10.12.2/firebase-";await ld(b+"app-compat.js");await Promise.all([ld(b+"auth-compat.js"),ld(b+"firestore-compat.js")]);firebase.initializeApp(CFG);FA=firebase.auth();FD=firebase.firestore();
+FA.onAuthStateChanged(u=>{FU=u;if(!AUTHR){AUTHR=1;setTimeout(()=>{u?discord():welcome()},600)}if(unsub){unsub();unsub=null}if(u)listen();else ST="";redo()})}catch(e){AE="Couldn’t reach the sync service. Check your connection.";redo()}}
+async function authGo(){const g=i=>$("#"+i)?$("#"+i).value.trim():"";const em=g("ae"),us=g("au"),pw=$("#ap").value;AE="";AOK=0;AX=em;
+if(!FA){AE="Sync is still loading. Try again in a moment.";return render()}
+try{if(AM=="up"){if(!/^[A-Za-z0-9_]{3,20}$/.test(us))throw{message:"Username must be 3 to 20 letters, numbers or underscores."};
+const c=await FA.createUserWithEmailAndPassword(em,pw);
+try{await FD.doc("usernames/"+us.toLowerCase()).set({uid:c.user.uid})}catch(e){await c.user.delete();throw{message:"That username is taken. Pick another."}}
+await c.user.updateProfile({displayName:us});await FD.doc("users/"+c.user.uid).set({username:us,email:em},{merge:true})}
+else await FA.signInWithEmailAndPassword(em,pw)}catch(e){AE=AER[e.code]||e.message||"Something went wrong."}
+render()}
+function resetPw(){const em=$("#ae").value.trim();AX=em;AOK=0;if(!em){AE="Enter your email first.";return render()}
+FA.sendPasswordResetEmail(em).then(()=>{AE="Reset link sent. Check your email.";AOK=1}).catch(e=>{AE=AER[e.code]||"Couldn’t send the reset email."}).finally(render)}
+function signOut(){FA.signOut().then(()=>{S={ps:[{id:1,name:"My Collection",items:{}}],a:1,tab:"a"};try{localStorage.setItem("ct1",JSON.stringify(S))}catch(e){}render()})}
+function vA(){
+if(!OK)return '<h1>Account</h1><p class="mu">Cloud sync isn’t switched on in this copy yet. Follow Part 2 and Part 3 of the tutorial to turn it on.</p>';
+if(FU)return '<h1>Account</h1><div class="card cp"><b>'+E(FU.displayName||"Signed in")+'</b><span class="mu">'+E(FU.email)+'</span><p class="mu">'+E(ST||"Syncing…")+'</p></div><p class="mu">Your portfolios sync to every device signed in to this account. Signing out removes this device’s local copy; your cards stay in your account.</p><button class="bt g" data-out>Sign out</button>';
+const up=AM=="up";
+return "<h1>"+(up?"Create account":"Sign in")+"</h1>"+(AE?'<p style="color:'+(AOK?"var(--up)":"#e5484d")+'">'+E(AE)+"</p>":"")+'<input id="ae" type="email" placeholder="Email" autocomplete="email" value="'+E(AX)+'">'+(up?'<input id="au" placeholder="Username" autocomplete="username" autocapitalize="none">':"")+'<input id="ap" type="password" placeholder="Password" autocomplete="'+(up?"new":"current")+'-password"><button class="bt" data-go>'+(up?"Create account":"Sign in")+"</button>"+(up?"":'<button class="lk" data-fp>Forgot password?</button><br>')+'<button class="lk" data-au>'+(up?"Have an account? Sign in":"New here? Create an account")+"</button>"}
+document.addEventListener("keydown",e=>{if(e.key=="Enter"&&e.target.id=="ap")authGo()});
+/* Settings, themes, layout */
+let CF={theme:"default",lm:"list",ld:"list"};try{Object.assign(CF,JSON.parse(localStorage.getItem("ct1c")||"{}"))}catch(e){}
+const THEMES=["default","dark","light","green","blue","orange","yellow"];
+function applyCF(){try{localStorage.setItem("ct1c",JSON.stringify(CF))}catch(e){}const r=document.documentElement;if(CF.theme=="default")delete r.dataset.theme;else r.dataset.theme=CF.theme;document.body.dataset.lay=matchMedia("(min-width:900px)").matches?CF.ld:CF.lm}
+function vSettings(){const th=THEMES.map(x=>'<button class="chip '+(CF.theme==x?"on":"")+'" data-th="'+x+'">'+x[0].toUpperCase()+x.slice(1)+"</button>").join("");
+const ly=(k,l)=>'<div class="mu" style="margin-top:10px">'+l+'</div><div class="chips">'+[["list","List"],["grid","Grid"]].map(([v,n])=>'<button class="chip '+(CF[k]==v?"on":"")+'" data-ly="'+k+":"+v+'">'+n+"</button>").join("")+"</div>";
+return "<h1>Settings</h1>"+'<div class="card cp"><b>Theme</b><div class="chips" style="margin-top:8px;flex-wrap:wrap">'+th+"</div></div>"+'<div class="card cp"><b>Card layout when browsing</b>'+ly("lm","Phone and small screens")+ly("ld","Desktop and large screens")+"</div>"+'<div class="card cp"><b>Community</b><button class="bt g" data-dc>Join our Discord</button></div>'+'<div class="card cp" style="padding-top:4px">'+vA().replace(/<h1>/g,"<h2>").replace(/<\/h1>/g,"</h2>")+"</div>"}
+/* Popups */
+function welcome(){if(!OK)return;sheet('<h2>Welcome to Harrylife TCG Manager</h2><p class="mu">Sign in to keep your portfolios in sync on every device, or use the app without an account.</p><button class="bt" data-wl="in">Sign in or create an account</button><button class="bt g" data-wl="skip">Use without an account</button>')}
+function discord(f){let seen=0;try{seen=localStorage.getItem("ct_dc")}catch(e){}if(seen&&!f)return;try{localStorage.setItem("ct_dc","1")}catch(e){}
+sheet('<h2>Join our Discord</h2><p class="mu">Chat with other collectors, share your pulls and get help with the app.</p><a class="bt" href="https://discord.gg/scxp4Ewnwr" target="_blank" rel="noopener">Join the Discord server</a><button class="bt g" data-x>Maybe later</button>')}
+/* Camera scan (beta): reads text from the camera picture and matches it to the card data */
+let STREAM=null,SCT=null,SCBUSY=0,TSW=null,SCP=null,SCM=[];
+function scanParse(t){const T=(t||"").replace(/[|]/g,"I");
+const nums=[...T.matchAll(/\b0*(\d{1,3})\s*\/\s*0*(\d{1,3})\b/g)].map(m=>m[1]+"/"+m[2]);
+const grd=T.match(/\b(PSA|CGC|BGS|SGC|TAG|ACE|BECKETT)\b[\s\S]{0,40}?\b(10|9\.5|9|8\.5|8|7\.5|7|6|5|4|3|2|1)\b/i);
+const words=[...new Set(T.toLowerCase().match(/[a-z][a-z'’.\-]{2,}/g)||[])];
+const lat=(T.match(/[A-Za-z]/g)||[]).length/(T.replace(/\s/g,"").length||1);
+return{nums,grd,words,lat}}
+async function scanMatch(p){const nk=n=>String(n||"").split("/").map(x=>/^\d+$/.test(x)?String(+x):x).join("/");
+const sc=r=>{const nm=r[2].toLowerCase();let s=0;p.words.forEach(w=>{if(nm.includes(w))s+=w.length>3?2:1});return s};
+const run=(rows,jp)=>{const o=[];for(const r of rows){const nn=p.nums.includes(nk(r[3])),s=sc(r);if((nn&&s>=1)||(!p.nums.length&&s>=4)||(nn&&p.words.length<2))o.push([s+(nn?3:0),r])}
+o.sort((a,b)=>b[0]-a[0]);return o.slice(0,4).map(([s,r])=>({...cd([r[0],r[2],r[3],r[4],r[5],r[6],r[7]],(jp?"j":"")+r[1]),jp,sc:s}))};
+let out=[];if(p.lat>=.5)out=run(await loadIdx(),0);
+if(!out.length||out[0].sc<3){try{const j=run(await loadJIdx(),1);if(j.length&&(!out.length||j[0].sc>out[0].sc))out=j}catch(e){}}
+return out}
+function scanRender(){const o=$("#scr");if(!o)return;const p=SCP||{},g=p.grd?'<p class="mu">Graded slab detected: '+E(p.grd[1].toUpperCase()+" "+p.grd[2])+". Tap a result, then choose Graded.</p>":"";
+o.innerHTML=SCM.length?"<b>Found</b>"+(SCM[0].jp?'<p class="mu">Language not recognised as English, so these are Japanese matches.</p>':"")+g+'<div class="list">'+SCM.map(c=>row(c,rt(c))).join("")+"</div>":'<p class="mu">Looking for a card, graded slab or sealed product. Hold it steady, fill the frame and keep the card number at the bottom in view.</p>'+g}
+async function scanTick(){if(SCBUSY||!STREAM||!TSW)return;const v=$("#scv");if(!v||!v.videoWidth)return;SCBUSY=1;
+try{const k=Math.min(1,1100/v.videoWidth),cv=document.createElement("canvas");cv.width=v.videoWidth*k;cv.height=v.videoHeight*k;cv.getContext("2d").drawImage(v,0,0,cv.width,cv.height);
+const r=await TSW.recognize(cv);SCP=scanParse(r.data.text);SCM=await scanMatch(SCP);scanRender()}catch(e){}SCBUSY=0}
+async function scanOpen(){if(!LIVE){sheet('<h2>Scanner</h2><p class="mu">The scanner needs live data. Open the hosted app.</p><button class="bt g" data-x>Close</button>');return}
+const o=$("#scn");o.hidden=false;o.innerHTML='<video id="scv" autoplay playsinline muted></video><div id="scr" class="scp"><p class="mu">Starting camera…</p></div><button class="bt g scx" data-sx>Close</button>';SCM=[];SCP=null;
+try{STREAM=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280}}});$("#scv").srcObject=STREAM}catch(e){$("#scr").innerHTML='<p>Camera blocked. Allow camera access for this site, then try again.</p>';return}
+$("#scr").innerHTML='<p class="mu">Loading the scanner (the first time takes a moment)…</p>';
+try{if(!window.Tesseract)await ld("https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js");if(!TSW)TSW=await Tesseract.createWorker("eng")}catch(e){$("#scr").innerHTML='<p>Couldn’t load the scanner. Check your connection.</p>';return}
+scanRender();SCT=setInterval(scanTick,1800)}
+function scanClose(){clearInterval(SCT);if(STREAM)STREAM.getTracks().forEach(t=>t.stop());STREAM=null;const o=$("#scn");o.hidden=true;o.innerHTML=""}
+document.addEventListener("pointermove",hov);document.addEventListener("pointerdown",hov);document.addEventListener("pointerout",hovOut);
+if(window.matchMedia)matchMedia("(min-width:900px)").addEventListener("change",applyCF);
+applyCF();render();init();fbInit();if(!OK)setTimeout(()=>discord(),900);
+</script></body></html>
