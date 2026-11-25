@@ -5,10 +5,11 @@ on:
   workflow_dispatch:
     inputs:
       backfill_days:
-        description: "Days of past prices to load (0 = none, try 90)"
+        description: "Past prices to load: 0 = none, 90 = three months, all = everything back to Feb 2024"
         default: "0"
 permissions:
   contents: write
+  actions: write
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -20,6 +21,7 @@ jobs:
           sudo apt-get update -y || true
           sudo apt-get install -y p7zip-full || echo "7zip not installed (only needed for backfill)"
       - name: Download prices
+        id: sync
         env:
           BACKFILL_DAYS: ${{ github.event.inputs.backfill_days }}
         run: python3 sync.py
@@ -37,3 +39,11 @@ jobs:
           done
           echo "::error::Could not save the results to GitHub (push failed 3 times)"
           exit 1
+      - name: Keep loading history
+        if: steps.sync.outputs.more == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BF: ${{ github.event.inputs.backfill_days }}
+        run: |
+          echo "More history to load: starting another run"
+          gh workflow run "Sync card data" --ref "$GITHUB_REF_NAME" -f backfill_days="$BF" || echo "Could not start the next run: run Sync card data again to continue"
